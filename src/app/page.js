@@ -1,65 +1,122 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
+import Link from "next/link";
+import { BookOpen, Clock, LogOut, PlayCircle, ShieldCheck, UserRound } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import { courses } from "./data/courses";
+import { getCurrentUser, signOut } from "./utils/auth";
+
+export default function HomePage() {
+  const router = useRouter();
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    getCurrentUser().then(setUser);
+  }, []);
+
+  async function handleSignOut() {
+    await signOut();
+    setUser(null);
+    router.push("/login");
+  }
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.js file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="app-shell">
+      <header className="topbar">
+        <Link className="brand" href="/">
+          <span className="brand-mark">
+            <BookOpen size={19} />
+          </span>
+          <span>CourseFlow Academy</span>
+        </Link>
+        <div className="nav-actions">
+          {user ? (
+            <>
+              <span className="user-pill">
+                <UserRound size={15} /> {user.name}
+              </span>
+              <button className="ghost-button" onClick={handleSignOut} type="button">
+                <LogOut size={16} /> Sign out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link className="ghost-button" href="/login">
+                Sign in
+              </Link>
+              <Link className="primary-button" href="/signup">
+                Create account
+              </Link>
+            </>
+          )}
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      <section className="hero-band">
+        <div className="hero-inner">
+          <div className="hero-copy">
+            <h1>CourseFlow Academy</h1>
+            <p>
+              Choose a course, open its module path, and study each lecture through clean slide notes from
+              introduction to advanced practice.
+            </p>
+          </div>
+          <div className="stats-panel" aria-label="Platform highlights">
+            <div className="stat-row">
+              <PlayCircle size={34} />
+              <span>
+                <strong>21</strong>
+                slide lectures across courses
+              </span>
+            </div>
+            <div className="stat-row">
+              <Clock size={34} />
+              <span>
+                <strong>7</strong>
+                guided modules in every course
+              </span>
+            </div>
+            <div className="stat-row">
+              <ShieldCheck size={34} />
+              <span>
+                <strong>Real login</strong>
+                backed by MongoDB and secure cookies
+              </span>
+            </div>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      <section className="page">
+        <div className="section-heading">
+          <div>
+            <h2>Available courses</h2>
+            <p>Start with styling, programming, or authentication and move module by module.</p>
+          </div>
+        </div>
+
+        <div className="course-grid">
+          {courses.map((course) => (
+            <article className="course-card" key={course.slug}>
+              <div className="course-art" style={{ background: course.accent }}>
+                {course.shortTitle}
+              </div>
+              <div className="course-body">
+                <h3>{course.title}</h3>
+                <p>{course.description}</p>
+                <div className="course-meta">
+                  <span>{course.level}</span>
+                  <span>{course.duration}</span>
+                </div>
+                <Link className="primary-button" href={`/courses/${course.slug}`}>
+                  Open course
+                </Link>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+    </main>
   );
 }
