@@ -43,7 +43,7 @@ export default function SignupPage() {
           <span>CourseFlow Academy</span>
         </Link>
         <h1>Create your learner account</h1>
-        <p>Signup stores your profile and hashed password in MongoDB, then starts a secure session.</p>
+        
 
         <form className="form-stack" onSubmit={handleSubmit}>
           <div className="field">
@@ -51,7 +51,7 @@ export default function SignupPage() {
             <input
               id="name"
               onChange={(event) => setName(event.target.value)}
-              placeholder="Ada Lovelace"
+              placeholder="Uthman olaleke"
               type="text"
               value={name}
             />

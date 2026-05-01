@@ -52,7 +52,7 @@ export default function LoginPage() {
           <span>CourseFlow Academy</span>
         </Link>
         <h1>Sign in to continue learning</h1>
-        <p>Login with the account you created. Your account is checked against MongoDB.</p>
+        <p>Login with the account you created. </p>
 
         <form className="form-stack" onSubmit={handleSubmit}>
           <div className="field">
